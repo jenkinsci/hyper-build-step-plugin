@@ -1,7 +1,7 @@
 hyper-build-step-plugin
 =======================
 
-[![Build Status](https://travis-ci.org/hyperhq/hyper-build-step-plugin.svg?branch=master)](https://travis-ci.org/hyperhq/hyper-build-step-plugin)
+[![Build Status](https://travis-ci.org/jenkinsci/hyper-build-step-plugin.svg?branch=master)](https://travis-ci.org/jenkinsci/hyper-build-step-plugin)
 
 Run some tasks of Jenkins job in [Hyper_](https://hyper.sh) container.
 This plugin allows to add "Execute shell in Hyper_" build step into your job.

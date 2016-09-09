@@ -25,10 +25,12 @@
 package sh.hyper.hyperbuildstep.drivers;
 
 import hudson.Launcher;
+import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
 import sh.hyper.hyperbuildstep.HyperDriver;
 import sh.hyper.hyperbuildstep.ContainerInstance;
 import hudson.util.ArgumentListBuilder;
+import sh.hyper.plugins.hypercommons.Tools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +39,9 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public ContainerInstance createAndLaunchBuildContainer(Launcher launcher, String image) throws IOException, InterruptedException {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
+        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
+
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("create")
                 .add(image);
@@ -68,6 +73,9 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public int execInContainer(Launcher launcher, String containerId, String commands) throws IOException, InterruptedException {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
+        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
+
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("exec", containerId)
                 .add("sh", "-c")
@@ -83,6 +91,9 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public int removeContainer(Launcher launcher, String containerId) throws IOException, InterruptedException {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
+        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
+
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("rm", "-f", containerId);
 
@@ -96,6 +107,9 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public void pullImage(Launcher launcher, String image) throws IOException, InterruptedException {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
+        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
+
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("pull")
                 .add(image);
@@ -110,6 +124,12 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public boolean checkImageExists(Launcher launcher, String image) throws IOException, InterruptedException {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
+        System.out.println(((Tools.DescriptorImpl)toolsDescriptor).getHyperAccessId());
+        boolean ok = ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
+
+        System.out.println(ok);
+
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("inspect")
                 .add("-f", "'{{.Id}}'")
@@ -120,9 +140,12 @@ public class CliHyperDriver implements HyperDriver {
     }
 
     public void prependArgs(ArgumentListBuilder args) {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
         String jenkinsHome = Jenkins.getInstance().getRootDir().getPath();
         String hyperCliPath = jenkinsHome + "/bin/hyper";
-        String configPath = jenkinsHome + "/.hyper";
+        String configPath = "/tmp/hyper-commons-plugin";
+        String hyperUrl = ((Tools.DescriptorImpl)toolsDescriptor).getHyperUrl();
+        args.prepend("--host=" + hyperUrl);
         args.prepend(configPath);
         args.prepend("--config");
         args.prepend(hyperCliPath);

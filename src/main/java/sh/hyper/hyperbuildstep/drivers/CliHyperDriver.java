@@ -25,10 +25,12 @@
 package sh.hyper.hyperbuildstep.drivers;
 
 import hudson.Launcher;
+import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
 import sh.hyper.hyperbuildstep.HyperDriver;
 import sh.hyper.hyperbuildstep.ContainerInstance;
 import hudson.util.ArgumentListBuilder;
+import sh.hyper.plugins.hypercommons.Tools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -110,7 +112,7 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public boolean checkImageExists(Launcher launcher, String image) throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder()
+       ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("inspect")
                 .add("-f", "'{{.Id}}'")
                 .add(image);
@@ -120,9 +122,12 @@ public class CliHyperDriver implements HyperDriver {
     }
 
     public void prependArgs(ArgumentListBuilder args) {
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
         String jenkinsHome = Jenkins.getInstance().getRootDir().getPath();
         String hyperCliPath = jenkinsHome + "/bin/hyper";
-        String configPath = jenkinsHome + "/.hyper";
+        String configPath = "/tmp/hyper-commons-plugin";
+        String hyperUrl = ((Tools.DescriptorImpl)toolsDescriptor).getHyperUrl();
+        args.prepend("--host=" + hyperUrl);
         args.prepend(configPath);
         args.prepend("--config");
         args.prepend(hyperCliPath);

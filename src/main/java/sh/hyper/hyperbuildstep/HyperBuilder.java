@@ -25,6 +25,8 @@
 package sh.hyper.hyperbuildstep;
 
 import hudson.Launcher;
+import hudson.model.Descriptor;
+import jenkins.model.Jenkins;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.util.FormValidation;
@@ -37,6 +39,7 @@ import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.QueryParameter;
+import sh.hyper.plugins.hypercommons.Tools;
 
 import javax.servlet.ServletException;
 import java.io.*;
@@ -81,8 +84,26 @@ public class HyperBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
             throws IOException, InterruptedException {
-        HyperProvisioner provisioner = new HyperProvisioner();
-        provisioner.launchBuildProcess(launcher, listener, image, commands);
+        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
+        boolean ok = ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
+
+        if (ok == false) {
+            ((Tools.DescriptorImpl)toolsDescriptor).removeTmpCredential();
+            throw new IOException("Failed to create temporary credential file.");
+        }
+
+        try {
+            HyperProvisioner provisioner = new HyperProvisioner();
+            provisioner.launchBuildProcess(launcher, listener, image, commands);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            ok = ((Tools.DescriptorImpl)toolsDescriptor).removeTmpCredential();
+            if (ok == false) {
+                throw new IOException("Failed to remove temporary credential file.");
+            }
+        }
+
     }
 
     // Overridden for better type safety.
@@ -139,7 +160,7 @@ public class HyperBuilder extends Builder implements SimpleBuildStep {
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
-            // Indicates that this builder can be used with all kinds of project types 
+            // Indicates that this builder can be used with all kinds of project types
             return true;
         }
 

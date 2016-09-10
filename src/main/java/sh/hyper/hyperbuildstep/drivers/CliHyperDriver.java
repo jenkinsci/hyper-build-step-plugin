@@ -39,9 +39,6 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public ContainerInstance createAndLaunchBuildContainer(Launcher launcher, String image) throws IOException, InterruptedException {
-        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
-        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
-
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("create")
                 .add(image);
@@ -73,9 +70,6 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public int execInContainer(Launcher launcher, String containerId, String commands) throws IOException, InterruptedException {
-        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
-        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
-
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("exec", containerId)
                 .add("sh", "-c")
@@ -91,9 +85,6 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public int removeContainer(Launcher launcher, String containerId) throws IOException, InterruptedException {
-        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
-        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
-
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("rm", "-f", containerId);
 
@@ -107,9 +98,6 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public void pullImage(Launcher launcher, String image) throws IOException, InterruptedException {
-        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
-        ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
-
         ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("pull")
                 .add(image);
@@ -124,13 +112,7 @@ public class CliHyperDriver implements HyperDriver {
 
     @Override
     public boolean checkImageExists(Launcher launcher, String image) throws IOException, InterruptedException {
-        Descriptor<Tools> toolsDescriptor = Jenkins.getInstance().getDescriptor(Tools.class);
-        System.out.println(((Tools.DescriptorImpl)toolsDescriptor).getHyperAccessId());
-        boolean ok = ((Tools.DescriptorImpl)toolsDescriptor).createTmpCredential();
-
-        System.out.println(ok);
-
-        ArgumentListBuilder args = new ArgumentListBuilder()
+       ArgumentListBuilder args = new ArgumentListBuilder()
                 .add("inspect")
                 .add("-f", "'{{.Id}}'")
                 .add(image);

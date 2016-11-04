@@ -3,8 +3,8 @@ hyper-build-step-plugin
 
 [![Build Status](https://travis-ci.org/jenkinsci/hyper-build-step-plugin.svg?branch=master)](https://travis-ci.org/jenkinsci/hyper-build-step-plugin)
 
-Run some tasks of Jenkins job in [Hyper_](https://hyper.sh) container.
-This plugin allows to add "Execute shell in Hyper_" build step into your job.
+Run some tasks of Jenkins job in [Hyper.sh](https://hyper.sh) container.
+This plugin allows to add "Execute shell in Hyper.sh" build step into your job.
 
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
@@ -12,7 +12,7 @@ This plugin allows to add "Execute shell in Hyper_" build step into your job.
 - [Use plugin](#use-plugin)
 	- [Prerequisites](#prerequisites)
 	- [Install plugin by manually](#install-plugin-by-manually)
-	- [Config Hyper_](#config-hyper)
+	- [Config Hyper.sh](#config-hyper)
 	- [Config job](#config-job)
 	- [View build result](#view-build-result)
 - [Build plugin](#build-plugin)
@@ -42,7 +42,7 @@ Manage Jenkins -> Manage Plugins -> Advanced -> Upload Plugin
 ![](images/upload-plugin.PNG)
 
 
-## Config Hyper_
+## Config Hyper.sh
 
 - install `hyper-commons-plugin` first
 - login https://console.hyper.sh, then create credentials.
@@ -60,7 +60,7 @@ Config -> Configure System
 ## Config job
 
 ```
-Config -> Build -> Execute shell in Hyper_
+Config -> Build -> Execute shell in Hyper.sh
 ```
 ![](images/config-job.PNG)
 

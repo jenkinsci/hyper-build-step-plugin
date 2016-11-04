@@ -147,7 +147,7 @@ public class HyperBuilder extends Builder implements SimpleBuildStep {
          * This human readable name is used in the configuration screen.
          */
         public String getDisplayName() {
-            return "Execute shell in Hyper_";
+            return "Execute shell in Hyper.sh";
         }
 
     }
